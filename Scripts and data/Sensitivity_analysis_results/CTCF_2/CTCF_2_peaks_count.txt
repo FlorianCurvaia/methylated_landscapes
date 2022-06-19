@@ -1,0 +1,55 @@
+Delta: 0.0
+Number of sequences nomet: 1
+Number of sequences ext: 1
+Number of common sequences: 0
+Number of methylated equivalent: 0
+Delta: 0.05
+Number of sequences nomet: 1
+Number of sequences ext: 1
+Number of common sequences: 0
+Number of methylated equivalent: 0
+Delta: 0.1
+Number of sequences nomet: 4
+Number of sequences ext: 1
+Number of common sequences: 0
+Number of methylated equivalent: 1
+Delta: 0.15
+Number of sequences nomet: 7
+Number of sequences ext: 2
+Number of common sequences: 0
+Number of methylated equivalent: 2
+Delta: 0.2
+Number of sequences nomet: 13
+Number of sequences ext: 4
+Number of common sequences: 0
+Number of methylated equivalent: 2
+Delta: 0.25
+Number of sequences nomet: 21
+Number of sequences ext: 5
+Number of common sequences: 0
+Number of methylated equivalent: 3
+Delta: 0.3
+Number of sequences nomet: 36
+Number of sequences ext: 5
+Number of common sequences: 0
+Number of methylated equivalent: 4
+Delta: 0.35
+Number of sequences nomet: 44
+Number of sequences ext: 22
+Number of common sequences: 5
+Number of methylated equivalent: 15
+Delta: 0.4
+Number of sequences nomet: 58
+Number of sequences ext: 32
+Number of common sequences: 8
+Number of methylated equivalent: 23
+Delta: 0.45
+Number of sequences nomet: 68
+Number of sequences ext: 49
+Number of common sequences: 19
+Number of methylated equivalent: 30
+Delta: 0.5
+Number of sequences nomet: 82
+Number of sequences ext: 67
+Number of common sequences: 32
+Number of methylated equivalent: 35
