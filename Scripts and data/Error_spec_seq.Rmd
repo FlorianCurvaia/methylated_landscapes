@@ -1,0 +1,387 @@
+---
+title: "Errors spec-seq"
+author: "Florian Curvaia"
+date: "27/05/2022"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library("ggplot2")
+library("reshape2")
+library("viridis")
+path <- paste(getwd(), "Sensitivity_analysis_results", sep="/")
+
+```
+
+# AP1
+
+## AP1 sample 1
+```{r, comment="", echo=FALSE}
+AP1_1 <- read.table(paste(path, "AP1_1/AP1_1_comparison.csv", sep="/"), header=T, sep="\t")
+AP1_1$Contains_CpG <- as.factor(AP1_1$Contains_CpG)
+summary(AP1_1)
+```
+
+Plot of all sequences
+```{r, comment=""}
+ggplot(AP1_1, aes(x=Score_nomet, y=Score_met, color=Contains_CpG))+geom_point()+geom_abline(slope=1, intercept = 0) + geom_abline(slope=1, intercept = 0.25, linetype="dashed") + geom_abline(slope=1, intercept = -0.25, linetype="dashed")+scale_color_viridis(discrete=TRUE, direction=-1, name="Contains CpG", labels=("Yes"))+xlab("Score without methylation")+ylab("Score with methylation")
+ggsave(paste(path, "AP1_1/Plots/AP1_1_scatter.png", sep="/"))
+```
+
+Violin plot of distribution of the scores between methylated and non methylated sequences.
+```{r, comment=""}
+AP1_1_mod <- melt(AP1_1, measure.vars = c('Score_nomet', 'Score_met'), variable.name="Methylation")
+levels(AP1_1_mod$Methylation) <- c("No", "Yes")
+ggplot(data=AP1_1_mod)+geom_violin(aes(Methylation, value, color=Methylation, fill=Methylation))+scale_color_viridis(discrete=TRUE)+scale_fill_viridis(discrete = TRUE, alpha=0.3)+ylab("Score")
+ggsave(paste(path, "AP1_1/Plots/AP1_1_violin.png", sep="/"))
+```
+
+Are the non-methylated scores normally distributed ?
+```{r, comment=""}
+shapiro.test(AP1_1$Score_nomet)
+
+```
+P-value<<0.05, so we reject the null hyptohesis of normal distribution
+
+Are the methylated scores normally distributed ?
+```{r, comment=""}
+shapiro.test(AP1_1$Score_met)
+```
+P-value<<0.05, so we reject the null hyptohesis of normal distribution
+
+Is there a change between non-methylated and methylated sequences
+```{r, comment=""}
+wilcox.test(AP1_1$Score_nomet, AP1_1$Score_met, paired=TRUE)
+```
+Rejection of null hypothesis of no difference between not methylated and methylated sequences
+
+Are the scores of methylated sequences greater than the one of non-methylated sequences ?
+```{r, comment=""}
+wilcox.test(AP1_1$Score_nomet, AP1_1$Score_met, paired=TRUE, alternative="less")
+```
+
+Are the scores of methylated sequences smaller than the one of non-methylated sequences ?
+```{r, comment=""}
+wilcox.test(AP1_1$Score_nomet, AP1_1$Score_met, paired=TRUE, alternative="greater")
+```
+
+## AP1 sample 2
+```{r, comment="", echo=FALSE}
+AP1_2 <- read.table(paste(path, "AP1_2/AP1_2_comparison.csv", sep="/"), header=T, sep="\t")
+AP1_2$Contains_CpG <- as.factor(AP1_2$Contains_CpG)
+#levels(AP1_2$Contains_CpG) <- c(1)
+summary(AP1_2)
+```
+
+Plot of all sequences
+```{r, comment=""}
+ggplot(AP1_2, aes(x=Score_nomet, y=Score_met, color=Contains_CpG))+geom_point()+geom_abline(slope=1, intercept = 0) + geom_abline(slope=1, intercept = 0.25, linetype="dashed") + geom_abline(slope=1, intercept = -0.25, linetype="dashed")+scale_color_viridis(discrete=TRUE, direction=-1, name="Contains CpG", labels=("Yes"))+xlab("Score without methylation")+ylab("Score with methylation")
+ggsave(paste(path, "AP1_2/Plots/AP1_2_scatter.png", sep="/"))
+```
+
+Violin plot of distribution of the scores between methylated and non methylated sequences.
+```{r, comment=""}
+AP1_2_mod <- melt(AP1_2, measure.vars = c('Score_nomet', 'Score_met'), variable.name="Methylation")
+levels(AP1_2_mod$Methylation) <- c("No", "Yes")
+ggplot(data=AP1_2_mod)+geom_violin(aes(Methylation, value, color=Methylation, fill=Methylation))+scale_color_viridis(discrete=TRUE)+scale_fill_viridis(discrete = TRUE, alpha=0.3)+ylab("Score")
+ggsave(paste(path, "AP1_2/Plots/AP1_2_violin.png", sep="/"))
+```
+
+Are the non-methylated scores normally distributed ?
+```{r, comment=""}
+shapiro.test(AP1_2$Score_nomet)
+
+```
+P-value<<0.05, so we reject the null hyptohesis of normal distribution
+
+Are the methylated scores normally distributed ?
+```{r, comment=""}
+shapiro.test(AP1_2$Score_met)
+```
+P-value<<0.05, so we reject the null hyptohesis of normal distribution
+
+Is there a change between non-methylated and methylated sequences
+```{r, comment=""}
+wilcox.test(AP1_2$Score_nomet, AP1_2$Score_met, paired=TRUE)
+```
+Rejection of null hypothesis of no difference between not methylated and methylated sequences
+
+Are the scores of methylated sequences greater than the one of non-methylated sequences ?
+```{r, comment=""}
+wilcox.test(AP1_2$Score_nomet, AP1_2$Score_met, paired=TRUE, alternative="less")
+```
+
+Are the scores of methylated sequences smaller than the one of non-methylated sequences ?
+```{r, comment=""}
+wilcox.test(AP1_2$Score_nomet, AP1_2$Score_met, paired=TRUE, alternative="greater")
+```
+
+# CTCF
+
+## CTCF sample 1
+```{r, comment=""}
+CTCF_1 <- read.table(paste(path, "CTCF_1/CTCF_1_comparison.csv", sep="/"), header=T, sep="\t")
+CTCF_1$Contains_CpG <- as.factor(CTCF_1$Contains_CpG)
+summary(CTCF_1)
+```
+
+Plot with both sequences having CpG and sequences not having CpG
+```{r, comment=""}
+ggplot(CTCF_1, aes(x=Score_nomet, y=Score_met, color=Contains_CpG))+geom_point(size=0.25)+geom_abline(slope=1, intercept = 0) + geom_abline(slope=1, intercept = 0.25, linetype="dashed") + geom_abline(slope=1, intercept = -0.25, linetype="dashed")+scale_color_viridis(discrete=TRUE, name="Contains CpG", labels=c("No","Yes"))+xlab("Score without methylation")+ylab("Score with methylation")
+ggsave(paste(path, "CTCF_1/Plots/CTCF_1_scatter.png", sep="/"))
+```
+
+Plot with sequences having CpG
+```{r, comment=""}
+CTCF_1_CG <- CTCF_1[CTCF_1$Contains_CpG == "True",]
+CTCF_1_no_CG <- CTCF_1[CTCF_1$Contains_CpG == "False",]
+ggplot(CTCF_1_CG, aes(x=Score_nomet, y=Score_met))+geom_point(size=0.25)+geom_abline(slope=1, intercept = 0) + geom_abline(slope=1, intercept = 0.25) + geom_abline(slope=1, intercept = -0.25)
+```
+
+Plot with sequences not having CpG
+```{r, comment=""}
+ggplot(CTCF_1_no_CG, aes(x=Score_nomet, y=Score_met))+geom_point(size=0.25)+geom_abline(slope=1, intercept = 0) + geom_abline(slope=1, intercept = 0.25) + geom_abline(slope=1, intercept = -0.25)
+```
+
+Violin plot of distribution of the scores between methylated and non methylated sequences.
+```{r, comment=""}
+CTCF_1_mod <- melt(CTCF_1, measure.vars = c('Score_nomet', 'Score_met'), variable.name="Methylation")
+levels(CTCF_1_mod$Methylation) <- c("No", "Yes")
+ggplot(data=CTCF_1_mod)+geom_violin(aes(Methylation, value, color=Methylation, fill=Methylation))+scale_color_viridis(discrete=TRUE)+scale_fill_viridis(discrete = TRUE, alpha=0.3)+ylab("Score")
+ggsave(paste(path, "CTCF_1/Plots/CTCF_1_violin.png", sep="/"))
+```
+
+Are the non-methylated scores normally distributed ?
+```{r, comment=""}
+shapiro.test(CTCF_1$Score_nomet)
+```
+
+P-value<<0.05, so we reject the null hypothesis of normal distribution
+
+
+Are the methylated scores normally distributed ?
+```{r, comment=""}
+shapiro.test(CTCF_1$Score_met)
+```
+P-value<<0.05, so we reject the null hyptohesis of normal distribution
+
+
+Is there a change between non-methylated and methylated sequences
+```{r, comment=""}
+wilcox.test(CTCF_1$Score_nomet, CTCF_1$Score_met, paired=TRUE)
+```
+Rejection of null hypothesis of no difference between not methylated and methylated sequences.
+
+
+Are the scores of methylated sequences greater than the one of non-methylated sequences ?
+```{r, comment=""}
+wilcox.test(CTCF_1$Score_nomet, CTCF_1$Score_met, paired=TRUE, alternative="less")
+```
+
+
+Are the scores of methylated sequences smaller than the one of non-methylated sequences ?
+```{r, comment=""}
+wilcox.test(CTCF_1$Score_nomet, CTCF_1$Score_met, paired=TRUE, alternative="greater")
+```
+
+The results are not really consistent with landscapes' results. Let's try to filter the data by only looking at the sequences which contain at least on CpG dinucleotide.
+
+First, is the scores of methylated sequences greater than the one of non-methylated sequences ?
+```{r, comment="", echo=FALSE}
+wilcox.test(CTCF_1_CG$Score_nomet, CTCF_1_CG$Score_met, paired=TRUE, alternative="less")
+```
+
+
+Then, is the scores of methylated sequences smaller than the one of non-methylated sequences ?
+```{r, comment="", echo=FALSE}
+wilcox.test(CTCF_1_CG$Score_nomet, CTCF_1_CG$Score_met, paired=TRUE, alternative="greater")
+```
+
+Analyse spread of the scores of sequences which doesn't contain any CpG:
+```{r, comment=""}
+quantile(CTCF_1_no_CG$Difference, probs = seq(.1, .9, by = .1))
+quantile(CTCF_1_no_CG$Difference, probs = seq(.05, .95, by = .05))
+```
+
+Let's try with absolute difference:
+```{r, comment=""}
+quantile(abs(CTCF_1_no_CG$Difference), probs = seq(.1, .9, by = .1))
+quantile(abs(CTCF_1_no_CG$Difference), probs = seq(.05, .95, by = .05))
+```
+
+Let's compute the proportion of sequences containing no CpG with a difference inside the 0.25 deviation bound used for now:
+```{r, comment=""}
+dev_CTCF_1 <- CTCF_1_no_CG[abs(CTCF_1_no_CG$Difference)<=0.25,]
+nrow(dev_CTCF_1)/nrow(CTCF_1_no_CG)
+```
+
+Then let's see if there is a difference in the effect of methylation between sequences with at least one CpG and sequences without any:
+```{r, comment=""}
+shapiro.test(CTCF_1_no_CG$Difference)
+wilcox.test(CTCF_1_no_CG$Difference, CTCF_1_CG$Difference)
+```
+
+## CTCF sample 2
+```{r, comment=""}
+CTCF_2 <- read.table(paste(path, "CTCF_2/CTCF_2_comparison.csv", sep="/"), header=T, sep="\t")
+CTCF_2$Contains_CpG <- as.factor(CTCF_2$Contains_CpG)
+summary(CTCF_2)
+```
+
+Plot with both sequences having CpG and sequences not having CpG
+```{r, comment=""}
+ggplot(CTCF_2, aes(x=Score_nomet, y=Score_met, color=Contains_CpG))+geom_point(size=0.25)+geom_abline(slope=1, intercept = 0) + geom_abline(slope=1, intercept = 0.25, linetype="dashed") + geom_abline(slope=1, intercept = -0.25, linetype="dashed")+scale_color_viridis(discrete=TRUE, name="Contains CpG", labels=c("No","Yes"))+xlab("Score without methylation")+ylab("Score with methylation")
+ggsave(paste(path, "CTCF_2/Plots/CTCF_2_scatter.png", sep="/"))
+```
+
+Plot with sequences having CpG
+```{r, comment=""}
+CTCF_2_CG <- CTCF_2[CTCF_2$Contains_CpG == "True",]
+CTCF_2_no_CG <- CTCF_2[CTCF_2$Contains_CpG == "False",]
+ggplot(CTCF_2_CG, aes(x=Score_nomet, y=Score_met))+geom_point(size=0.25)+geom_abline(slope=1, intercept = 0) + geom_abline(slope=1, intercept = 0.25) + geom_abline(slope=1, intercept = -0.25)
+```
+
+Plot with sequences not having CpG
+```{r, comment=""}
+ggplot(CTCF_2_no_CG, aes(x=Score_nomet, y=Score_met))+geom_point(size=0.25)+geom_abline(slope=1, intercept = 0) + geom_abline(slope=1, intercept = 0.25) + geom_abline(slope=1, intercept = -0.25)
+```
+
+Violin plot of distribution of the scores between methylated and non methylated sequences.
+```{r, comment=""}
+CTCF_2_mod <- melt(CTCF_2, measure.vars = c('Score_nomet', 'Score_met'), variable.name="Methylation")
+levels(CTCF_2_mod$Methylation) <- c("No", "Yes")
+ggplot(data=CTCF_2_mod)+geom_violin(aes(Methylation, value, color=Methylation, fill=Methylation))+scale_color_viridis(discrete=TRUE)+scale_fill_viridis(discrete = TRUE, alpha=0.3)+ylab("Score")
+ggsave(paste(path, "CTCF_2/Plots/CTCF_2_violin.png", sep="/"))
+```
+
+Are the non-methylated scores normally distributed ?
+```{r, comment=""}
+shapiro.test(CTCF_2$Score_nomet)
+```
+
+P-value<<0.05, so we reject the null hyptohesis of normal distribution
+
+
+Are the methylated scores normally distributed ?
+```{r, comment=""}
+shapiro.test(CTCF_2$Score_met)
+```
+P-value<<0.05, so we reject the null hyptohesis of normal distribution
+
+
+Is there a change between non-methylated and methylated sequences
+```{r, comment=""}
+wilcox.test(CTCF_2$Score_nomet, CTCF_2$Score_met, paired=TRUE)
+```
+Rejection of null hypothesis of no difference between not methylated and methylated sequences.
+
+
+Are the scores of methylated sequences greater than the one of non-methylated sequences ?
+```{r, comment=""}
+wilcox.test(CTCF_2$Score_nomet, CTCF_2$Score_met, paired=TRUE, alternative="less")
+```
+
+
+Are the scores of methylated sequences smaller than the one of non-methylated sequences ?
+```{r, comment=""}
+wilcox.test(CTCF_2$Score_nomet, CTCF_2$Score_met, paired=TRUE, alternative="greater")
+```
+
+The results are not really consistent with landscapes' results. Let's try to filter the data by only looking at the sequences which contain at least on CpG dinucleotide.
+
+First, is the scores of methylated sequences greater than the one of non-methylated sequences ?
+```{r, comment="", echo=FALSE}
+wilcox.test(CTCF_2_CG$Score_nomet, CTCF_2_CG$Score_met, paired=TRUE, alternative="less")
+```
+
+
+Then, is the scores of methylated sequences smaller than the one of non-methylated sequences ?
+```{r, comment="", echo=FALSE}
+wilcox.test(CTCF_2_CG$Score_nomet, CTCF_2_CG$Score_met, paired=TRUE, alternative="greater")
+```
+
+Analyse spread of the scores of sequences which doesn't contain any CpG:
+```{r, comment=""}
+quantile(CTCF_2_no_CG$Difference, probs = seq(.1, .9, by = .1))
+quantile(CTCF_2_no_CG$Difference, probs = seq(.05, .95, by = .05))
+```
+
+Let's try with absolute difference:
+```{r, comment=""}
+quantile(abs(CTCF_2_no_CG$Difference), probs = seq(.1, .9, by = .1))
+quantile(abs(CTCF_2_no_CG$Difference), probs = seq(.05, .95, by = .05))
+```
+
+Let's compute the proportion of sequences containing no CpG with a difference inside the 0.25 deviation bound used for now:
+```{r, comment=""}
+dev_CTCF_2 <- CTCF_2_no_CG[abs(CTCF_2_no_CG$Difference)<=0.25,]
+nrow(dev_CTCF_2)/nrow(CTCF_2_no_CG)
+```
+
+Then let's see if there is a difference in the effect of methylation between sequences with at least one CpG and sequences without any:
+```{r, comment=""}
+shapiro.test(CTCF_2_no_CG$Difference)
+wilcox.test(CTCF_2_no_CG$Difference, CTCF_2_CG$Difference)
+```
+
+Then let's see if there is a difference in the effect of methylation between sequences with at least one CpG and sequences without any:
+```{r, comment=""}
+shapiro.test(CTCF_2_no_CG$Difference)
+wilcox.test(CTCF_2_no_CG$Difference, CTCF_2_CG$Difference)
+```
+
+## Comparison of results between sample 1 and sample 2: 
+
+For both samples of CTCF, given the results of the landscape, we would have expected that methylated sequences have a greater score than non-methylated ones. However it doesn't seems to be the case. 
+Maybe, methylation only acts in amplifying the scores. For sequences that binds well already when non-methylated, it makes them bind even better, but for sequences that doesn't bind well when non-methylated, maybe then they bind even less when methylated.
+
+# ZFP57
+```{r, comment="", echo=FALSE}
+ZFP57 <- read.table(paste(path, "ZFP57/ZFP57_comparison.csv", sep="/"), header=T, sep="\t")
+ZFP57$Contains_CpG <- as.factor(ZFP57$Contains_CpG)
+summary(ZFP57)
+```
+
+Plot of all sequences
+```{r, comment=""}
+ggplot(ZFP57, aes(x=Score_nomet, y=Score_met, color=Contains_CpG))+geom_point()+geom_abline(slope=1, intercept = 0) + geom_abline(slope=1, intercept = 0.25, linetype="dashed") + geom_abline(slope=1, intercept = -0.25, linetype="dashed")+scale_color_viridis(discrete=TRUE, direction=-1, name="Contains CpG", labels=("Yes"))+xlab("Score without methylation")+ylab("Score with methylation")
+ggsave(paste(path, "ZFP57/Plots/ZFP57_scatter.png", sep="/"))
+```
+
+Violin plot of distribution of the scores between methylated and non methylated sequences.
+```{r, comment=""}
+ZFP57_mod <- melt(ZFP57, measure.vars = c('Score_nomet', 'Score_met'), variable.name="Methylation")
+levels(ZFP57_mod$Methylation) <- c("No", "Yes")
+ggplot(data=ZFP57_mod)+geom_violin(aes(Methylation, value, color=Methylation, fill=Methylation))+scale_color_viridis(discrete=TRUE)+scale_fill_viridis(discrete = TRUE, alpha=0.3)+ylab("Score")
+ggsave(paste(path, "ZFP57/Plots/ZFP57_violin.png", sep="/"))
+```
+
+Are the non-methylated scores normally distributed ?
+```{r, comment=""}
+shapiro.test(ZFP57$Score_nomet)
+
+```
+P-value<<0.05, so we reject the null hyptohesis of normal distribution
+
+Are the methylated scores normally distributed ?
+```{r, comment=""}
+shapiro.test(ZFP57$Score_met)
+```
+P-value<<0.05, so we reject the null hyptohesis of normal distribution
+
+Is there a change between non-methylated and methylated sequences
+```{r, comment=""}
+wilcox.test(ZFP57$Score_nomet, ZFP57$Score_met, paired=TRUE)
+```
+Rejection of null hypothesis of no difference between not methylated and methylated sequences
+
+Are the scores of methylated sequences greater than the one of non-methylated sequences ?
+```{r, comment=""}
+wilcox.test(ZFP57$Score_nomet, ZFP57$Score_met, paired=TRUE, alternative="less")
+```
+
+Are the scores of methylated sequences smaller than the one of non-methylated sequences ?
+```{r, comment=""}
+wilcox.test(ZFP57$Score_nomet, ZFP57$Score_met, paired=TRUE, alternative="greater")
+```

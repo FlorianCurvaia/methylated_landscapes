@@ -1,0 +1,483 @@
+---
+title: "Correlation Analaysis Number of peaks-Suboptimisation scores"
+author: "Florian Curvaia"
+date: "6/6/2022"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library("ggplot2")
+library("reshape2")
+library("viridis")
+library("coin")
+path <- paste(getwd(), "Sensitivity_analysis_results", sep="/")
+```
+
+# AP1 Sample 1
+```{r, comment=""}
+AP1_1_counts <- read.table(paste(path, "AP1_1/Corr_peaks_score_AP1_1.csv", sep="/"), sep="\t", header=TRUE)
+```
+
+Does the number of peaks in nomet landscape correlate with the sub-optimisation score of greedy walk on the same landscape ?
+
+```{r, comment=""}
+cor.test(AP1_1_counts$N_peaks_nomet, AP1_1_counts$Greedy_nomet, method="kendall")
+```
+
+Does the number of peaks in nomet landscape correlate with the sub-optimisation score of random walk on the same landscape ?
+
+```{r, comment=""}
+cor.test(AP1_1_counts$N_peaks_nomet, AP1_1_counts$Random_nomet, method="kendall")
+```
+
+Does the number of peaks in extended landscape correlate with the sub-optimisation score of greedy walk on the same landscape ?
+
+```{r, comment=""}
+cor.test(AP1_1_counts$N_peaks_ext, AP1_1_counts$Greedy_ext, method="kendall")
+```
+
+Does the number of peaks in extended landscape correlate with the sub-optimisation score of random walk on the same landscape ?
+
+```{r, comment=""}
+cor.test(AP1_1_counts$N_peaks_ext, AP1_1_counts$Random_ext, method="kendall")
+```
+
+Are the scores of greedy walk and random walk on nomet landscape different ? 
+
+```{r, comment=""}
+wilcox.test(AP1_1_counts$Greedy_nomet, AP1_1_counts$Random_nomet, paired=TRUE)
+```
+
+Are the scores of greedy walk and random walk on extended landscape different ? 
+
+```{r, comment=""}
+wilcox.test(AP1_1_counts$Greedy_ext, AP1_1_counts$Random_ext, paired=TRUE)
+```
+
+Are the scores of greedy walk on nomet landscape and greedy walk on extended landscape different ? 
+
+```{r, comment=""}
+wilcox.test(AP1_1_counts$Greedy_nomet, AP1_1_counts$Greedy_ext, paired=TRUE)
+```
+
+Are the scores of random walk on nomet landscape and random walk on extended landscape different ?
+
+```{r, comment=""}
+wilcox.test(AP1_1_counts$Random_nomet, AP1_1_counts$Random_ext, paired=TRUE)
+```
+
+Let's test only for delta >= 0.25
+
+Are the scores of greedy walk on nomet landscape and greedy walk on extended landscape different ? 
+
+```{r, comment=""}
+wilcox.test(AP1_1_counts$Greedy_nomet[AP1_1_counts$Delta>=0.25], AP1_1_counts$Greedy_ext[AP1_1_counts$Delta>=0.25], paired=TRUE)
+```
+
+Are the scores of random walk on nomet landscape and random walk on extended landscape different ?
+
+```{r, comment=""}
+wilcox.test(AP1_1_counts$Random_nomet[AP1_1_counts$Delta>=0.25], AP1_1_counts$Random_ext[AP1_1_counts$Delta>=0.25], paired=TRUE)
+```
+
+
+# AP1 Sample 2
+```{r, comment=""}
+AP1_2_counts <- read.table(paste(path, "AP1_2/Corr_peaks_score_AP1_2.csv", sep="/"), sep="\t", header=TRUE)
+```
+
+Does the number of peaks in nomet landscape correlate with the sub-optimisation score of greedy walk on the same landscape ?
+
+```{r, comment=""}
+cor.test(AP1_2_counts$N_peaks_nomet, AP1_2_counts$Greedy_nomet, method="kendall")
+```
+
+Does the number of peaks in nomet landscape correlate with the sub-optimisation score of random walk on the same landscape ?
+
+```{r, comment=""}
+cor.test(AP1_2_counts$N_peaks_nomet, AP1_2_counts$Random_nomet, method="kendall")
+```
+
+Does the number of peaks in extended landscape correlate with the sub-optimisation score of greedy walk on the same landscape ?
+
+```{r, comment=""}
+cor.test(AP1_2_counts$N_peaks_ext, AP1_2_counts$Greedy_ext, method="kendall")
+```
+
+Does the number of peaks in extended landscape correlate with the sub-optimisation score of random walk on the same landscape ?
+
+```{r, comment=""}
+cor.test(AP1_2_counts$N_peaks_ext, AP1_2_counts$Random_ext, method="kendall")
+```
+
+Are the scores of greedy walk and random walk on nomet landscape different ? 
+
+```{r, comment=""}
+wilcox.test(AP1_2_counts$Greedy_nomet, AP1_2_counts$Random_nomet, paired=TRUE)
+```
+
+Are the scores of greedy walk and random walk on extended landscape different ? 
+
+```{r, comment=""}
+wilcox.test(AP1_2_counts$Greedy_ext, AP1_2_counts$Random_ext, paired=TRUE)
+```
+
+Are the scores of greedy walk on nomet landscape and greedy walk on extended landscape different ? 
+
+```{r, comment=""}
+wilcox.test(AP1_2_counts$Greedy_nomet, AP1_2_counts$Greedy_ext, paired=TRUE)
+```
+
+Are the scores of random walk on nomet landscape and random walk on extended landscape different ?
+
+```{r, comment=""}
+wilcox.test(AP1_2_counts$Random_nomet, AP1_2_counts$Random_ext, paired=TRUE)
+```
+
+Let's test only for delta >= 0.25
+
+Are the scores of greedy walk on nomet landscape and greedy walk on extended landscape different ? 
+
+```{r, comment=""}
+wilcox.test(AP1_2_counts$Greedy_nomet[AP1_2_counts$Delta>=0.25], AP1_2_counts$Greedy_ext[AP1_2_counts$Delta>=0.25], paired=TRUE)
+```
+
+Are the scores of random walk on nomet landscape and random walk on extended landscape different ?
+
+```{r, comment=""}
+wilcox.test(AP1_2_counts$Random_nomet[AP1_2_counts$Delta>=0.25], AP1_2_counts$Random_ext[AP1_2_counts$Delta>=0.25], paired=TRUE)
+```
+
+
+# CTCF Sample 1
+```{r, comment=""}
+CTCF_1_counts <- read.table(paste(path, "CTCF_1/Corr_peaks_score_CTCF_1.csv", sep="/"), sep="\t", header=TRUE)
+```
+
+Does the number of peaks in nomet landscape correlate with the sub-optimisation score of greedy walk on the same landscape ?
+
+```{r, comment=""}
+cor.test(CTCF_1_counts$N_peaks_nomet, CTCF_1_counts$Greedy_nomet, method="kendall")
+```
+
+Does the number of peaks in nomet landscape correlate with the sub-optimisation score of random walk on the same landscape ?
+
+```{r, comment=""}
+cor.test(CTCF_1_counts$N_peaks_nomet, CTCF_1_counts$Random_nomet, method="kendall")
+```
+
+Does the number of peaks in extended landscape correlate with the sub-optimisation score of greedy walk on the same landscape ?
+
+```{r, comment=""}
+cor.test(CTCF_1_counts$N_peaks_ext, CTCF_1_counts$Greedy_ext, method="kendall")
+```
+
+Does the number of peaks in extended landscape correlate with the sub-optimisation score of random walk on the same landscape ?
+
+```{r, comment=""}
+cor.test(CTCF_1_counts$N_peaks_ext, CTCF_1_counts$Random_ext, method="kendall")
+```
+
+Are the scores of greedy walk and random walk on nomet landscape different ? 
+
+```{r, comment=""}
+wilcox.test(CTCF_1_counts$Greedy_nomet, CTCF_1_counts$Random_nomet, paired=TRUE)
+```
+
+Are the scores of greedy walk and random walk on extended landscape different ? 
+
+```{r, comment=""}
+wilcox.test(CTCF_1_counts$Greedy_ext, CTCF_1_counts$Random_ext, paired=TRUE)
+```
+
+Are the scores of greedy walk on nomet landscape and greedy walk on extended landscape different ? 
+
+```{r, comment=""}
+wilcox.test(CTCF_1_counts$Greedy_nomet, CTCF_1_counts$Greedy_ext, paired=TRUE)
+```
+
+Are the scores of random walk on nomet landscape and random walk on extended landscape different ?
+
+```{r, comment=""}
+wilcox.test(CTCF_1_counts$Random_nomet, CTCF_1_counts$Random_ext, paired=TRUE)
+```
+
+Let's test only for delta >= 0.25
+
+Are the scores of greedy walk on nomet landscape and greedy walk on extended landscape different ? 
+
+```{r, comment=""}
+wilcox.test(CTCF_1_counts$Greedy_nomet[CTCF_1_counts$Delta>=0.25], CTCF_1_counts$Greedy_ext[CTCF_1_counts$Delta>=0.25], paired=TRUE)
+```
+
+Are the scores of random walk on nomet landscape and random walk on extended landscape different ?
+
+```{r, comment=""}
+wilcox.test(CTCF_1_counts$Random_nomet[CTCF_1_counts$Delta>=0.25], CTCF_1_counts$Random_ext[CTCF_1_counts$Delta>=0.25], paired=TRUE)
+```
+
+
+Let's try now to compare the results for each delta, but taking in account the results of the 100 walks of each types for each delta, and not the mean of the 100 walks of each type as done previously.
+
+```{r, comment=""}
+CTCF_1_all <- read.table(paste(path, "CTCF_1/CTCF_1_all_walks.csv", sep="/"), sep="\t", header=TRUE)
+CTCF_1_all$Delta <- as.factor(CTCF_1_all$Delta)
+head(CTCF_1_all)
+summary(CTCF_1_all)
+
+```
+Let's see if scores of greedy_nomet are correlated with scores of greedy_ext
+```{r, comment=""}
+for(l in levels(CTCF_1_all$Delta)){
+  print(l)
+  print(cor.test(CTCF_1_all$Greedy_nomet[CTCF_1_all$Delta==l], CTCF_1_all$Greedy_ext[CTCF_1_all$Delta==l], method="kendall"))
+}
+```
+Let's see if scores of random_nomet are correlated with scores of random_ext
+```{r, comment=""}
+for(l in levels(CTCF_1_all$Delta)){
+  print(l)
+  print(cor.test(CTCF_1_all$Random_nomet[CTCF_1_all$Delta==l], CTCF_1_all$Random_ext[CTCF_1_all$Delta==l], method="kendall"))
+}
+```
+
+Let's see if scores of greedy_nomet and scores of greedy_ext are different
+```{r, comment=""}
+for(l in levels(CTCF_1_all$Delta)){
+  print(l)
+  print(wilcox.test(CTCF_1_all$Greedy_nomet[CTCF_1_all$Delta==l], CTCF_1_all$Greedy_ext[CTCF_1_all$Delta==l]))
+}
+```
+Let's see if scores of random_nomet and scores of random_ext are different
+```{r, comment=""}
+for(l in levels(CTCF_1_all$Delta)){
+  print(l)
+  print(wilcox.test(CTCF_1_all$Random_nomet[CTCF_1_all$Delta==l], CTCF_1_all$Random_ext[CTCF_1_all$Delta==l]))
+}
+```
+
+
+Let's see if scores of greedy_nomet and scores of greedy_ext are different with another method
+```{r, comment=""}
+CTCF_1_greedy <- melt(CTCF_1_all, measure.vars = c('Greedy_nomet', 'Greedy_ext'), variable.name="Walk_type")
+
+wilcox_test(CTCF_1_greedy$value ~ CTCF_1_greedy$Walk_type | CTCF_1_greedy$Delta, distribution = approximate(nresample = 10000) )
+
+kruskal_test(CTCF_1_greedy$value ~ CTCF_1_greedy$Delta | CTCF_1_greedy$Walk_type, distribution = approximate(nresample = 10000))
+
+```
+Let's see if scores of random_nomet and scores of random_ext are different with another method
+```{r, comment=""}
+CTCF_1_random <- melt(CTCF_1_all, measure.vars = c('Random_nomet', 'Random_ext'), variable.name="Walk_type")
+wilcox_test(CTCF_1_random$value ~ CTCF_1_random$Walk_type | CTCF_1_random$Delta, distribution = approximate(nresample = 10000))
+
+kruskal_test(CTCF_1_random$value ~ CTCF_1_random$Delta | CTCF_1_random$Walk_type, distribution = approximate(nresample = 10000))
+```
+
+
+
+# CTCF Sample 2
+```{r, comment=""}
+CTCF_2_counts <- read.table(paste(path, "CTCF_2/Corr_peaks_score_CTCF_2.csv", sep="/"), sep="\t", header=TRUE)
+```
+
+Does the number of peaks in nomet landscape correlate with the sub-optimisation score of greedy walk on the same landscape ?
+
+```{r, comment=""}
+cor.test(CTCF_2_counts$N_peaks_nomet, CTCF_2_counts$Greedy_nomet, method="kendall")
+```
+
+Does the number of peaks in nomet landscape correlate with the sub-optimisation score of random walk on the same landscape ?
+
+```{r, comment=""}
+cor.test(CTCF_2_counts$N_peaks_nomet, CTCF_2_counts$Random_nomet, method="kendall")
+```
+
+Does the number of peaks in extended landscape correlate with the sub-optimisation score of greedy walk on the same landscape ?
+
+```{r, comment=""}
+cor.test(CTCF_2_counts$N_peaks_ext, CTCF_2_counts$Greedy_ext, method="kendall")
+```
+
+Does the number of peaks in extended landscape correlate with the sub-optimisation score of random walk on the same landscape ?
+
+```{r, comment=""}
+cor.test(CTCF_2_counts$N_peaks_ext, CTCF_2_counts$Random_ext, method="kendall")
+```
+
+Are the scores of greedy walk and random walk on nomet landscape different ? 
+
+```{r, comment=""}
+wilcox.test(CTCF_2_counts$Greedy_nomet, CTCF_2_counts$Random_nomet, paired=TRUE)
+```
+
+Are the scores of greedy walk and random walk on extended landscape different ? 
+
+```{r, comment=""}
+wilcox.test(CTCF_2_counts$Greedy_ext, CTCF_2_counts$Random_ext, paired=TRUE)
+```
+
+Are the scores of greedy walk on nomet landscape and greedy walk on extended landscape different ? 
+
+```{r, comment=""}
+wilcox.test(CTCF_2_counts$Greedy_nomet, CTCF_2_counts$Greedy_ext, paired=TRUE)
+```
+
+Are the scores of random walk on nomet landscape and random walk on extended landscape different ?
+
+```{r, comment=""}
+wilcox.test(CTCF_2_counts$Random_nomet, CTCF_2_counts$Random_ext, paired=TRUE)
+```
+
+Let's test only for delta >= 0.25
+
+Are the scores of greedy walk on nomet landscape and greedy walk on extended landscape different ? 
+
+```{r, comment=""}
+wilcox.test(CTCF_2_counts$Greedy_nomet[CTCF_2_counts$Delta>=0.25], CTCF_2_counts$Greedy_ext[CTCF_2_counts$Delta>=0.25], paired=TRUE)
+```
+
+Are the scores of random walk on nomet landscape and random walk on extended landscape different ?
+
+```{r, comment=""}
+wilcox.test(CTCF_2_counts$Random_nomet[CTCF_2_counts$Delta>=0.25], CTCF_2_counts$Random_ext[CTCF_2_counts$Delta>=0.25], paired=TRUE)
+```
+
+Let's try now to compare the results for each delta, but taking in account the results of the 100 walks of each types for each delta, and not the mean of the 100 walks of each type as done previously.
+
+```{r, comment=""}
+CTCF_2_all <- read.table(paste(path, "CTCF_2/CTCF_2_all_walks.csv", sep="/"), sep="\t", header=TRUE)
+CTCF_2_all$Delta <- as.factor(CTCF_2_all$Delta)
+head(CTCF_2_all)
+summary(CTCF_2_all)
+
+```
+Let's see if scores of greedy_nomet are correlated with scores of greedy_ext
+```{r, comment=""}
+for(l in levels(CTCF_2_all$Delta)){
+  print(l)
+  print(cor.test(CTCF_2_all$Greedy_nomet[CTCF_2_all$Delta==l], CTCF_2_all$Greedy_ext[CTCF_2_all$Delta==l], method="kendall"))
+}
+```
+Let's see if scores of random_nomet are correlated with scores of random_ext
+```{r, comment=""}
+for(l in levels(CTCF_2_all$Delta)){
+  print(l)
+  print(cor.test(CTCF_2_all$Random_nomet[CTCF_2_all$Delta==l], CTCF_2_all$Random_ext[CTCF_2_all$Delta==l], method="kendall"))
+}
+```
+
+Let's see if scores of greedy_nomet and scores of greedy_ext are different
+```{r, comment=""}
+for(l in levels(CTCF_2_all$Delta)){
+  print(l)
+  print(wilcox.test(CTCF_2_all$Greedy_nomet[CTCF_2_all$Delta==l], CTCF_2_all$Greedy_ext[CTCF_2_all$Delta==l]))
+}
+```
+Let's see if scores of random_nomet and scores of random_ext are different
+```{r, comment=""}
+for(l in levels(CTCF_2_all$Delta)){
+  print(l)
+  print(wilcox.test(CTCF_2_all$Random_nomet[CTCF_2_all$Delta==l], CTCF_2_all$Random_ext[CTCF_2_all$Delta==l]))
+}
+```
+
+Let's see if scores of greedy_nomet and scores of greedy_ext are different
+```{r, comment=""}
+for(l in levels(CTCF_2_all$Delta)){
+  print(l)
+  print(wilcox.test(CTCF_2_all$Greedy_nomet[CTCF_2_all$Delta==l], CTCF_2_all$Greedy_ext[CTCF_2_all$Delta==l]))
+}
+```
+Let's see if scores of random_nomet and scores of random_ext are different
+```{r, comment=""}
+for(l in levels(CTCF_2_all$Delta)){
+  print(l)
+  print(wilcox.test(CTCF_2_all$Random_nomet[CTCF_2_all$Delta==l], CTCF_2_all$Random_ext[CTCF_2_all$Delta==l]))
+}
+```
+
+Let's see if scores of greedy_nomet and scores of greedy_ext are different with another method
+```{r, comment=""}
+CTCF_2_greedy_v1 <- melt(CTCF_2_all, measure.vars = c('Greedy_nomet', 'Greedy_ext'), variable.name="Walk_type")
+CTCF_2_greedy <- CTCF_2_greedy_v1[as.numeric(CTCF_2_greedy_v1$Delta)>=0,]
+wilcox_test(CTCF_2_greedy$value ~ CTCF_2_greedy$Walk_type | CTCF_2_greedy$Delta, distribution = approximate(nresample = 10000))
+
+```
+
+Let's see if scores of random_nomet and scores of random_ext are different with another method
+```{r, comment=""}
+CTCF_2_random_v1 <- melt(CTCF_2_all, measure.vars = c('Random_nomet', 'Random_ext'), variable.name="Walk_type")
+CTCF_2_random <- CTCF_2_random_v1[as.numeric(CTCF_2_random_v1$Delta)>=0,]
+wilcox_test(CTCF_2_random$value ~ CTCF_2_random$Walk_type | CTCF_2_random$Delta, distribution = approximate(nresample = 10000))
+
+```
+
+
+# ZFP57
+```{r, comment=""}
+ZFP57_counts <- read.table(paste(path, "ZFP57/Corr_peaks_score_ZFP57.csv", sep="/"), sep="\t", header=TRUE)
+```
+
+Does the number of peaks in nomet landscape correlate with the sub-optimisation score of greedy walk on the same landscape ?
+
+```{r, comment=""}
+cor.test(ZFP57_counts$N_peaks_nomet, ZFP57_counts$Greedy_nomet, method="kendall")
+```
+
+Does the number of peaks in nomet landscape correlate with the sub-optimisation score of random walk on the same landscape ?
+
+```{r, comment=""}
+cor.test(ZFP57_counts$N_peaks_nomet, ZFP57_counts$Random_nomet, method="kendall")
+```
+
+Does the number of peaks in extended landscape correlate with the sub-optimisation score of greedy walk on the same landscape ?
+
+```{r, comment=""}
+cor.test(ZFP57_counts$N_peaks_ext, ZFP57_counts$Greedy_ext, method="kendall")
+```
+
+Does the number of peaks in extended landscape correlate with the sub-optimisation score of random walk on the same landscape ?
+
+```{r, comment=""}
+cor.test(ZFP57_counts$N_peaks_ext, ZFP57_counts$Random_ext, method="kendall")
+```
+
+Are the scores of greedy walk and random walk on nomet landscape different ? 
+
+```{r, comment=""}
+wilcox.test(ZFP57_counts$Greedy_nomet, ZFP57_counts$Random_nomet, paired=TRUE)
+```
+
+Are the scores of greedy walk and random walk on extended landscape different ? 
+
+```{r, comment=""}
+wilcox.test(ZFP57_counts$Greedy_ext, ZFP57_counts$Random_ext, paired=TRUE)
+```
+
+Are the scores of greedy walk on nomet landscape and greedy walk on extended landscape different ? 
+
+```{r, comment=""}
+wilcox.test(ZFP57_counts$Greedy_nomet, ZFP57_counts$Greedy_ext, paired=TRUE)
+```
+
+Are the scores of random walk on nomet landscape and random walk on extended landscape different ?
+
+```{r, comment=""}
+wilcox.test(ZFP57_counts$Random_nomet, ZFP57_counts$Random_ext, paired=TRUE)
+```
+
+Let's test only for delta >= 0.25
+
+Are the scores of greedy walk on nomet landscape and greedy walk on extended landscape different ? 
+
+```{r, comment=""}
+wilcox.test(ZFP57_counts$Greedy_nomet[ZFP57_counts$Delta>=0.25], ZFP57_counts$Greedy_ext[ZFP57_counts$Delta>=0.25], paired=TRUE)
+```
+
+Are the scores of random walk on nomet landscape and random walk on extended landscape different ?
+
+```{r, comment=""}
+wilcox.test(ZFP57_counts$Random_nomet[ZFP57_counts$Delta>=0.25], ZFP57_counts$Random_ext[ZFP57_counts$Delta>=0.25], paired=TRUE)
+```

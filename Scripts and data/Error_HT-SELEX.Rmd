@@ -1,0 +1,258 @@
+---
+title: "Error_HT-SELEX"
+author: "Florian Curvaia"
+date: "5/31/2022"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library("ggplot2")
+library("reshape2")
+library("viridis")
+path <- paste(getwd(), "Selex_analysis", sep="/")
+```
+
+Warning: This file cannot be run in one single time, because it first create files which then need to be used by the python script Comparison_SELEX.py to generate the files needed for the rest of the code to run.
+
+Chunk which generates the files needed for the python script Comparison_SELEX.py:
+
+```{r, comment="", eval=FALSE, echo=FALSE}
+PROX1_nomet <- read.table("PROX1_eDBD_all_nomet_genonets.csv", header=TRUE, sep="\t", nrow=1500)
+summary(PROX1_nomet)
+write.table(PROX1_nomet, "PROX1_eDBD_best_nomet_genonets.csv", sep="\t", quote = FALSE, row.names = FALSE)
+PROX1_met <- read.table("PROX1_eDBD_all_met_genonets.csv", header=TRUE, sep="\t", nrow=1500)
+summary(PROX1_met)
+write.table(PROX1_met, "PROX1_eDBD_best_met_genonets.csv", sep="\t", quote = FALSE, row.names = FALSE)
+
+PROP1_nomet <- read.table("PROP1_FL_all_nomet_genonets.csv", header=TRUE, sep="\t", nrow=1500)
+summary(PROP1_nomet)
+write.table(PROP1_nomet, "PROP1_FL_best_nomet_genonets.csv", sep="\t", quote = FALSE, row.names = FALSE)
+PROP1_met <- read.table("PROP1_FL_all_met_genonets.csv", header=TRUE, sep="\t", nrow=1500)
+summary(PROP1_met)
+write.table(PROP1_met, "PROP1_FL_best_met_genonets.csv", sep="\t", quote = FALSE, row.names = FALSE)
+```
+# PROX1
+
+Generation of the comparison file with python
+```{r, comment="", echo=FALSE}
+PROX1 <- read.table(paste(path, "PROX1_eDBD_comparison.csv", sep="/"), header=T, sep="\t")
+PROX1$Contains_CpG <- as.factor(PROX1$Contains_CpG)
+summary(PROX1)
+```
+
+Plot with both sequences having CpG and sequences not having CpG
+```{r, comment=""}
+ggplot(PROX1, aes(x=Score_nomet, y=Score_met, color=Contains_CpG))+geom_point()+geom_abline(slope=1, intercept = 0) + scale_color_viridis(discrete=TRUE, name="Contains CpG", labels=c("No","Yes"))+xlab("Score without methylation")+ylab("Score with methylation")
+ggsave(paste(path, "PROX1_scatter.png", sep="/"))
+```
+
+Plot with sequences having CpG
+```{r, comment=""}
+PROX1_CG <- PROX1[PROX1$Contains_CpG == "True",]
+PROX1_no_CG <- PROX1[PROX1$Contains_CpG == "False",]
+ggplot(PROX1_CG, aes(x=Score_nomet, y=Score_met))+geom_point(size=0.25)+geom_abline(slope=1, intercept = 0) + geom_abline(slope=1, intercept = 0.25) + geom_abline(slope=1, intercept = -0.25)
+```
+
+Plot with sequences not having CpG
+```{r, comment=""}
+ggplot(PROX1_no_CG, aes(x=Score_nomet, y=Score_met))+geom_point(size=0.25)+geom_abline(slope=1, intercept = 0) + geom_abline(slope=1, intercept = 0.25) + geom_abline(slope=1, intercept = -0.25)
+```
+
+Violin plot of distribution of the scores between methylated and non methylated sequences.
+```{r, comment=""}
+PROX1_mod <- melt(PROX1, measure.vars = c('Score_nomet', 'Score_met'), variable.name="Methylation")
+levels(PROX1_mod$Methylation) <- c("No", "Yes")
+ggplot(data=PROX1_mod)+geom_violin(aes(Methylation, value, color=Methylation, fill=Methylation))+scale_color_viridis(discrete=TRUE)+scale_fill_viridis(discrete = TRUE, alpha=0.3)+ylab("Score")
+ggsave(paste(path, "PROX1_violin.png", sep="/"))
+```
+
+Are the non-methylated scores normally distributed ?
+```{r, comment=""}
+shapiro.test(PROX1$Score_nomet)
+```
+
+P-value<<0.05, so we reject the null hypothesis of normal distribution
+
+
+Are the methylated scores normally distributed ?
+```{r, comment=""}
+shapiro.test(PROX1$Score_met)
+```
+P-value<<0.05, so we reject the null hyptohesis of normal distribution
+
+
+Is there a change between non-methylated and methylated sequences
+```{r, comment=""}
+wilcox.test(PROX1$Score_nomet, PROX1$Score_met, paired=TRUE)
+```
+Rejection of null hypothesis of no difference between not methylated and methylated sequences.
+
+
+Are the scores of methylated sequences greater than the one of non-methylated sequences ?
+```{r, comment=""}
+wilcox.test(PROX1$Score_nomet, PROX1$Score_met, paired=TRUE, alternative="less")
+```
+
+
+Are the scores of methylated sequences smaller than the one of non-methylated sequences ?
+```{r, comment=""}
+wilcox.test(PROX1$Score_nomet, PROX1$Score_met, paired=TRUE, alternative="greater")
+```
+
+The results are not really consistent with landscapes' results. Let's try to filter the data by only looking at the sequences which contain at least on CpG dinucleotide.
+
+First, is the scores of methylated sequences greater than the one of non-methylated sequences ?
+```{r, comment="", echo=FALSE}
+wilcox.test(PROX1_CG$Score_nomet, PROX1_CG$Score_met, paired=TRUE, alternative="less")
+```
+
+
+Then, is the scores of methylated sequences smaller than the one of non-methylated sequences ?
+```{r, comment="", echo=FALSE}
+wilcox.test(PROX1_CG$Score_nomet, PROX1_CG$Score_met, paired=TRUE, alternative="greater")
+```
+
+Analyse spread of the scores of sequences which doesn't contain any CpG:
+```{r, comment=""}
+quantile(PROX1_no_CG$Difference, probs = seq(.1, .9, by = .1))
+quantile(PROX1_no_CG$Difference, probs = seq(.05, .95, by = .05))
+```
+
+Let's try with absolute difference:
+```{r, comment=""}
+quantile(abs(PROX1_no_CG$Difference), probs = seq(.1, .9, by = .1))
+quantile(abs(PROX1_no_CG$Difference), probs = seq(.05, .95, by = .05))
+```
+
+Let's compute the proportion of sequences containing no CpG with a difference inside the 0.25 deviation bound used for now:
+```{r, comment=""}
+dev_PROX1 <- PROX1_no_CG[abs(PROX1_no_CG$Difference)<=0.25,]
+nrow(dev_PROX1)/nrow(PROX1_no_CG)
+```
+
+Then let's see if there is a difference in the effect of methylation between sequences with at least one CpG and sequences without any:
+```{r, comment=""}
+shapiro.test(PROX1_no_CG$Difference)
+wilcox.test(PROX1_no_CG$Difference, PROX1_CG$Difference)
+```
+
+
+# PROP1
+
+Generation of the comparison file with python
+```{r, comment="", echo=FALSE}
+PROP1 <- read.table(paste(path, "PROP1_FL_comparison.csv", sep="/"), header=T, sep="\t")
+PROP1$Contains_CpG <- as.factor(PROP1$Contains_CpG)
+#PROP1 <- PROP1[PROP1$Score_met>-322,]
+summary(PROP1)
+```
+
+Plot with both sequences having CpG and sequences not having CpG
+```{r, comment=""}
+ggplot(PROP1, aes(x=Score_nomet, y=Score_met, color=Contains_CpG))+geom_point()+geom_abline(slope=1, intercept = 0) + scale_color_viridis(discrete=TRUE, name="Contains CpG", labels=c("No","Yes"))+xlab("Score without methylation")+ylab("Score with methylation")
+ggsave(paste(path, "PROP1_scatter.png", sep="/"))
+```
+
+Plot with sequences having CpG
+```{r, comment=""}
+PROP1_CG <- PROP1[PROP1$Contains_CpG == "True",]
+PROP1_no_CG <- PROP1[PROP1$Contains_CpG == "False",]
+ggplot(PROP1_CG, aes(x=Score_nomet, y=Score_met, color=Contains_CpG))+geom_point()+geom_abline(slope=1, intercept = 0) + scale_color_viridis(discrete=TRUE, name="Contains CpG", labels=c("Yes","No"), direction=-1)+xlab("Score without methylation")+ylab("Score with methylation")
+ggsave(paste(path, "PROP1_scatter_CG.png", sep="/"))
+summary(PROP1_CG)
+```
+
+Plot with sequences not having CpG
+```{r, comment=""}
+ggplot(PROP1_no_CG, aes(x=Score_nomet, y=Score_met))+geom_point(size=0.25)+geom_abline(slope=1, intercept = 0) + geom_abline(slope=1, intercept = 0.25) + geom_abline(slope=1, intercept = -0.25)
+```
+
+Violin plot of distribution of the scores between methylated and non methylated sequences.
+```{r, comment=""}
+PROP1_mod <- melt(PROP1, measure.vars = c('Score_nomet', 'Score_met'), variable.name="Methylation")
+levels(PROP1_mod$Methylation) <- c("No", "Yes")
+ggplot(data=PROP1_mod)+geom_violin(aes(Methylation, value, color=Methylation, fill=Methylation))+scale_color_viridis(discrete=TRUE)+scale_fill_viridis(discrete = TRUE, alpha=0.3)+ylab("Score")
+ggsave(paste(path, "PROP1_violin.png", sep="/"))
+```
+
+
+Violin plot of distribution of the scores between methylated and non methylated sequences that contains CG.
+```{r, comment=""}
+PROP1_CG_mod <- melt(PROP1_CG, measure.vars = c('Score_nomet', 'Score_met'), variable.name="Methylation")
+levels(PROP1_CG_mod$Methylation) <- c("No", "Yes")
+ggplot(data=PROP1_CG_mod)+geom_violin(aes(Methylation, value, color=Methylation, fill=Methylation))+scale_color_viridis(discrete=TRUE)+scale_fill_viridis(discrete = TRUE, alpha=0.3)+ylab("Score")
+ggsave(paste(path, "PROP1_CG_violin.png", sep="/"))
+```
+
+
+
+Are the non-methylated scores normally distributed ?
+```{r, comment=""}
+shapiro.test(PROP1$Score_nomet)
+```
+
+P-value<<0.05, so we reject the null hypothesis of normal distribution
+
+
+Are the methylated scores normally distributed ?
+```{r, comment=""}
+shapiro.test(PROP1$Score_met)
+```
+P-value<<0.05, so we reject the null hyptohesis of normal distribution
+
+
+Is there a change between non-methylated and methylated sequences
+```{r, comment=""}
+wilcox.test(PROP1$Score_nomet, PROP1$Score_met, paired=TRUE)
+```
+Rejection of null hypothesis of no difference between not methylated and methylated sequences.
+
+
+Are the scores of methylated sequences greater than the one of non-methylated sequences ?
+```{r, comment=""}
+wilcox.test(PROP1$Score_nomet, PROP1$Score_met, paired=TRUE, alternative="less")
+```
+
+
+Are the scores of methylated sequences smaller than the one of non-methylated sequences ?
+```{r, comment=""}
+wilcox.test(PROP1$Score_nomet, PROP1$Score_met, paired=TRUE, alternative="greater")
+```
+
+The results are not really consistent with landscapes' results. Let's try to filter the data by only looking at the sequences which contain at least on CpG dinucleotide.
+
+First, is the scores of methylated sequences greater than the one of non-methylated sequences ?
+```{r, comment="", echo=FALSE}
+wilcox.test(PROP1_CG$Score_nomet, PROP1_CG$Score_met, paired=TRUE, alternative="less")
+```
+
+
+Then, is the scores of methylated sequences smaller than the one of non-methylated sequences ?
+```{r, comment="", echo=FALSE}
+wilcox.test(PROP1_CG$Score_nomet, PROP1_CG$Score_met, paired=TRUE, alternative="greater")
+```
+
+Analyse spread of the scores of sequences which doesn't contain any CpG:
+```{r, comment=""}
+quantile(PROP1_no_CG$Difference, probs = seq(.1, .9, by = .1))
+quantile(PROP1_no_CG$Difference, probs = seq(.05, .95, by = .05))
+```
+
+Let's try with absolute difference:
+```{r, comment=""}
+quantile(abs(PROP1_no_CG$Difference), probs = seq(.1, .9, by = .1))
+quantile(abs(PROP1_no_CG$Difference), probs = seq(.05, .95, by = .05))
+```
+
+Let's compute the proportion of sequences containing no CpG with a difference inside the 0.25 deviation bound used for now:
+```{r, comment=""}
+dev_PROP1 <- PROP1_no_CG[abs(PROP1_no_CG$Difference)<=0.25,]
+nrow(dev_PROP1)/nrow(PROP1_no_CG)
+```
+
+Then let's see if there is a difference in the effect of methylation between sequences with at least one CpG and sequences without any:
+```{r, comment=""}
+shapiro.test(PROP1_no_CG$Difference)
+wilcox.test(PROP1_no_CG$Difference, PROP1_CG$Difference)
+```
