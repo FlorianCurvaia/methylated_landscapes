@@ -8,6 +8,7 @@ For now, the files here are not in their final version, as they need to be prope
 
 Also, this is the first GitHub I ever created, so this might not be the cleaner GitHub you have seen, and I might reorganise it in the near future. 
 
+All the meterial is in the [Scripts and data section](https://github.com/FlorianCurvaia/methylated_landscapes/tree/main/Scripts%20and%20data).
 ## Description of the main scripts:
 
 The script [sensitivity_analysis.py](https://github.com/FlorianCurvaia/methylated_landscapes/blob/main/Scripts%20and%20data/sensitivity_analysis.py) performs the analysis of the landscape for the desired TF as well as for the desired type of landscape (no-met or exetended). By default, analysis will be conducted for the range of delta values used in my report, but one can also specify a single value or a list of values to perform the analysis with. See the beginning of the script for example of the structure of the arguments to pass to the script.
